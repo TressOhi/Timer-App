@@ -1,0 +1,170 @@
+import React, {Component} from 'react'
+import './App.css'
+
+class App extends Component{
+  constructor (props){
+    super (props);
+    this.state ={
+      watch: "",
+      timer: ""
+    }
+  }
+  activateWatch=()=>{
+    this.setState({
+      watch: <Watch />,
+      timer:""
+    })
+    document.getElementsByClassName("app")[0].style.marginTop=0;
+  }
+  activateTimer=()=>{
+    this.setState({
+      timer: <Timer />,
+      watch:""
+    })
+    document.getElementsByClassName("app")[0].style.marginTop=0;
+  }
+  render(){
+    return(
+      <div className="app">
+        <div>
+          <div>
+            {this.state.watch}
+          </div>
+          <div>
+          {this.state.timer}
+          </div>
+          <div className="navbtns">
+            <button onClick={this.activateWatch} className="stopWatchButton navbtn">Stop Watch</button>  
+            <button onClick={this.activateTimer} className="timerButton navbtn">Timer</button>
+          </div>
+        </div> 
+      </div>
+    );
+  }
+}
+
+
+class Watch extends Component{
+  constructor (props){
+    super(props);
+    this.state={
+      secs: 0,
+      min: 0,
+      hours: 0
+    }
+  }
+  startTimer=()=>{
+    this.timerID= setInterval( ()=> this.tick(), 1000);
+  }
+  stopTimer=()=>{
+    clearInterval(this.timerID)
+  }
+  restartTimer=()=>{
+    this.setState({
+      secs: 0,
+      min: 0,
+      hours: 0
+    })
+  }
+  tick(){
+    this.setState({
+      secs : this.state.secs + 1
+    })
+    if (this.state.secs===60){
+      this.setState({
+        secs: 0,
+        min : this.state.min + 1
+      })
+    }
+    if (this.state.min===60){
+      this.setState({
+        min: 0,
+        hours : this.state.hours + 1
+      })
+    }
+  }
+  render(){
+    return(
+      <div className="counter">
+        <h2>Counter</h2>
+        <h1>{this.state.hours+":"+this.state.min+":"+this.state.secs}</h1>
+        <button onClick={this.startTimer} className="counterControl">Start</button> <button onClick={this.stopTimer} className="counterControl">Stop</button> <button onClick={this.restartTimer} className="counterControl">Clear</button>
+      </div>
+    );
+  }
+}
+
+class Timer extends Component{
+  constructor (props){
+    super (props);
+    this.state={
+      timerH: 0,
+      timerM:0,
+      timerS:0
+    }
+  }
+  countDown=()=>{
+    this.setState({
+      timerH:document.getElementsByClassName("timerHours")[0].value,
+      timerM:document.getElementsByClassName("timerMinutes")[0].value,
+      timerS:document.getElementsByClassName("timerSeconds")[0].value,
+    })
+  }
+  downCounter=()=>{
+    this.timerID=setInterval( ()=> this.downTick(), 1000)
+  }
+  downTick=()=>{
+    if((this.state.timerS===0) && (this.state.timerM===0) && (this.state.timerH===0)){
+      clearInterval(this.timerID);
+    }
+    if(this.state.timerS>0){
+      this.setState({
+      timerS: this.state.timerS -1
+    })
+    }
+    if(this.state.timerS==0){
+      if(this.state.timerM >0){
+        this.setState({
+          timerS: 59,
+          timerM: this.state.timerM -1
+        })
+      }
+      else{
+        this.setState({
+          timerS:0
+        })
+      }
+    }
+    if(this.state.timerM==0){
+      if(this.state.timerH >0){
+        this.setState({
+          timerM: 59,
+          timerH: this.state.timerH -1
+        })
+      }
+      else{
+        this.setState({
+          timerM:0
+        })
+      }
+    }
+  }
+  render(){
+    return(
+      <div className="timer">
+        <h2>Timer</h2>
+        <div className="inputs">
+          <input type="number" className="timerHours" placeholder="H" />
+          <input type="number" className="timerMinutes" placeholder="M" />
+          <input type="number" className="timerSeconds" placeholder="S" />
+          <button onClick={this.countDown}>Set</button>
+        </div>
+        <div className="timerClock">
+          <h1>{this.state.timerH+":"+this.state.timerM+":"+this.state.timerS}</h1>
+          <button onClick={this.downCounter}>Go</button>
+        </div>
+      </div>
+    );
+  }
+}
+export default App;
