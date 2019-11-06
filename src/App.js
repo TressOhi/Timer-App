@@ -87,7 +87,9 @@ class Watch extends Component{
     return(
       <div className="counter">
         <h2>Counter</h2>
-        <h1>{this.state.hours+":"+this.state.min+":"+this.state.secs}</h1>
+        <div className="roundBorder">
+          <h1>{this.state.hours+":"+this.state.min+":"+this.state.secs}</h1>
+        </div>
         <button onClick={this.startTimer} className="counterControl">Start</button> <button onClick={this.stopTimer} className="counterControl">Stop</button> <button onClick={this.restartTimer} className="counterControl">Clear</button>
       </div>
     );
@@ -113,9 +115,18 @@ class Timer extends Component{
   downCounter=()=>{
     this.timerID=setInterval( ()=> this.downTick(), 1000)
   }
+  pauseCounter=()=>{
+    clearInterval(this.timerID);
+  }
   downTick=()=>{
     if((this.state.timerS===0) && (this.state.timerM===0) && (this.state.timerH===0)){
       clearInterval(this.timerID);
+    }
+    if((this.state.timerS===4) && (this.state.timerM===0) && (this.state.timerH)){
+      document.getElementsByClassName("currentTime")[0].style.color="red";
+    }
+    else if(this.state.timerS>3){
+      document.getElementsByClassName("currentTime")[0].style.color="white";
     }
     if(this.state.timerS>0){
       this.setState({
@@ -136,9 +147,9 @@ class Timer extends Component{
       }
     }
     if(this.state.timerM==0){
-      if(this.state.timerH >0){
+      if((this.state.timerH >0) && (this.state.timerS ==0)){
         this.setState({
-          timerM: 59,
+          timerM: 60,
           timerH: this.state.timerH -1
         })
       }
@@ -160,8 +171,10 @@ class Timer extends Component{
           <button onClick={this.countDown}>Set</button>
         </div>
         <div className="timerClock">
-          <h1>{this.state.timerH+":"+this.state.timerM+":"+this.state.timerS}</h1>
-          <button onClick={this.downCounter}>Go</button>
+          <div className="roundBorder">
+            <h1 className="currentTime">{this.state.timerH+":"+this.state.timerM+":"+this.state.timerS}</h1>
+          </div>
+          <button onClick={this.downCounter}>Go</button> <button onClick={this.pauseCounter}>Pause</button>
         </div>
       </div>
     );
