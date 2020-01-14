@@ -31,7 +31,7 @@ class App extends Component{
             {this.state.watch}
           </div>
           <div>
-          {this.state.timer}
+            {this.state.timer}
           </div>
           <div className="navbtns">
             <button onClick={this.activateWatch} className="stopWatchButton navbtn">Stop Watch</button>  
@@ -50,16 +50,26 @@ class Watch extends Component{
     this.state={
       secs: 0,
       min: 0,
-      hours: 0
+      hours: 0,
+      clicked: false
     }
   }
   startTimer=()=>{
-    this.timerID= setInterval( ()=> this.tick(), 1000);
+    if(!this.state.clicked){
+      this.setState({
+        clicked: true
+      })
+      this.timerID= setInterval( (e) => this.tick(), 1000);
+    }
   }
   stopTimer=()=>{
+    this.setState({
+      clicked: false
+    })
     clearInterval(this.timerID)
   }
   restartTimer=()=>{
+    this.stopTimer();
     this.setState({
       secs: 0,
       min: 0,
@@ -67,20 +77,22 @@ class Watch extends Component{
     })
   }
   tick(){
-    this.setState({
-      secs : this.state.secs + 1
-    })
-    if (this.state.secs===60){
+    if(this.state.clicked){
       this.setState({
-        secs: 0,
-        min : this.state.min + 1
+        secs : this.state.secs + 1
       })
-    }
-    if (this.state.min===60){
-      this.setState({
-        min: 0,
-        hours : this.state.hours + 1
-      })
+      if (this.state.secs===60){
+        this.setState({
+          secs: 0,
+          min : this.state.min + 1
+        })
+      }
+      if (this.state.min===60){
+        this.setState({
+          min: 0,
+          hours : this.state.hours + 1
+        })
+      }
     }
   }
   render(){
@@ -102,7 +114,8 @@ class Timer extends Component{
     this.state={
       timerH: 0,
       timerM:0,
-      timerS:0
+      timerS:0,
+      clicked: false
     }
   }
   countDown=()=>{
@@ -113,50 +126,60 @@ class Timer extends Component{
     })
   }
   downCounter=()=>{
-    this.timerID=setInterval( ()=> this.downTick(), 1000)
+    if(!this.state.clicked){
+      this.setState({
+        clicked:true
+      })
+      this.timerID=setInterval( ()=> this.downTick(), 1000)
+    }
   }
   pauseCounter=()=>{
+    this.setState({
+      clicked:false
+    })
     clearInterval(this.timerID);
   }
   downTick=()=>{
-    if((this.state.timerS===0) && (this.state.timerM===0) && (this.state.timerH===0)){
-      clearInterval(this.timerID);
-    }
-    if((this.state.timerS===4) && (this.state.timerM===0) && (this.state.timerH)){
-      document.getElementsByClassName("currentTime")[0].style.color="red";
-    }
-    else if(this.state.timerS>3){
-      document.getElementsByClassName("currentTime")[0].style.color="white";
-    }
-    if(this.state.timerS>0){
-      this.setState({
-      timerS: this.state.timerS -1
-    })
-    }
-    if(this.state.timerS==0){
-      if(this.state.timerM >0){
+    if(this.state.clicked){
+      if((this.state.timerS===0) && (this.state.timerM===0) && (this.state.timerH===0)){
+        clearInterval(this.timerID);
+      }
+      if((this.state.timerS===4) && (this.state.timerM===0) && (this.state.timerH)){
+        document.getElementsByClassName("currentTime")[0].style.color="red";
+      }
+      else if(this.state.timerS>3){
+        document.getElementsByClassName("currentTime")[0].style.color="white";
+      }
+      if(this.state.timerS>0){
         this.setState({
-          timerS: 59,
-          timerM: this.state.timerM -1
+        timerS: this.state.timerS -1
         })
       }
-      else{
-        this.setState({
-          timerS:0
-        })
+      if(this.state.timerS==0){
+        if(this.state.timerM >0){
+          this.setState({
+            timerS: 59,
+            timerM: this.state.timerM -1
+          })
+        }
+        else{
+          this.setState({
+            timerS:0
+          })
+        }
       }
-    }
-    if(this.state.timerM==0){
-      if((this.state.timerH >0) && (this.state.timerS ==0)){
-        this.setState({
-          timerM: 60,
-          timerH: this.state.timerH -1
-        })
-      }
-      else{
-        this.setState({
-          timerM:0
-        })
+      if(this.state.timerM==0){
+        if((this.state.timerH >0) && (this.state.timerS ==0)){
+          this.setState({
+            timerM: 60,
+            timerH: this.state.timerH -1
+          })
+        }
+        else{
+          this.setState({
+            timerM:0
+          })
+        }
       }
     }
   }
